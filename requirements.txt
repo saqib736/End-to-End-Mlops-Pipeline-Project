@@ -19,4 +19,5 @@ Flask
 Flask-Cors
 ensure==1.0.4
 python-box==7.2.0
+gdown
 -e .
