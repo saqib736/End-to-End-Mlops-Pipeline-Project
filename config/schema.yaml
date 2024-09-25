@@ -1,0 +1,26 @@
+dataset:
+  name: "MNIST Dataset"
+
+data:
+  images:
+    shape: 
+      - 28   
+      - 28   
+    pixel_value_range:
+      min: 0  
+      max: 255
+    datatype: "uint8" 
+  
+  labels:
+    range:
+      min: 0
+      max: 9
+    datatype: "int"  
+
+integrity_checks:
+  num_images_equals_num_labels: true 
+
+duplicate_check:
+  enabled: true 
+missing_data_check:
+  enabled: true  

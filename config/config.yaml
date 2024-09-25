@@ -5,3 +5,13 @@ data_ingestion:
   source_URL: https://drive.google.com/uc?id=1CdDB6PT_AveNOTuPdMfYgLkDy2dIto-v
   local_data_file: artifacts/data_ingestion/mnist_data.zip
   unzip_dir: artifacts/data_ingestion
+  train_images_path: "train-images.idx3-ubyte"  
+  train_labels_path: "train-labels.idx1-ubyte"
+  test_images_path: "t10k-images.idx3-ubyte"
+  test_labels_path: "t10k-labels.idx1-ubyte"
+
+data_validation:
+  root_dir: artifacts/data_validation
+  STATUS_FILE: artifacts/data_validation/status.txt
+
+  
