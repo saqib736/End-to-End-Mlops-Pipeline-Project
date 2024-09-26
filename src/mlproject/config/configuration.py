@@ -1,5 +1,5 @@
 from mlproject.constants import *
-from mlproject.entity.config_entity import DataIngestionConfig, DataValidationConfig
+from mlproject.entity.config_entity import DataIngestionConfig, DataValidationConfig, ModelTrainerConfig
 from mlproject.utils.common import read_yaml, create_directories
 
 class ConfigurationManager:
@@ -44,3 +44,20 @@ class ConfigurationManager:
         )
         
         return data_validation_config
+    
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        config = self.config.model_trainer
+        model_params = self.params.CNN_model
+        
+        
+        create_directories([config.root_dir])
+        
+        model_trainer_config = ModelTrainerConfig(
+            root_dir=config.root_dir,
+            model_name=config.model_name,
+            num_epoch=model_params.num_epoch,
+            batch_size=model_params.batch_size,
+            learning_rate=model_params.learning_rate
+        )
+        
+        return model_trainer_config

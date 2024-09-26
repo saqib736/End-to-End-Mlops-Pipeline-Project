@@ -17,4 +17,11 @@ class DataValidationConfig:
     root_dir: Path
     STATUS_FILE: str
     schema: dict
-    
+
+@dataclass(frozen=True)
+class ModelTrainerConfig:
+    root_dir: Path
+    model_name: str
+    num_epoch: int
+    batch_size: int
+    learning_rate: float
