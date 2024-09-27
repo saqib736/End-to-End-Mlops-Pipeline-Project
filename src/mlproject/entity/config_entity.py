@@ -24,4 +24,14 @@ class ModelTrainerConfig:
     model_name: str
     num_epoch: int
     batch_size: int
+    learning_rate: float        
+    
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    root_dir: Path
+    model_path: Path
+    metric_file_name: Path
+    num_epoch: int
+    batch_size: int
     learning_rate: float
+    
