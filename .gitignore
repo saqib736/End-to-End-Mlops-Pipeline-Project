@@ -161,5 +161,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-artifacts/
 .vscode/
+# Ignore everything in the artifacts directory
+artifacts/*
+
+# Exclude the trained model
+!artifacts/model_trainer/
+!artifacts/model_trainer/model.pt
