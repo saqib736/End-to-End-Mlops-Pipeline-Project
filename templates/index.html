@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Hand Digit Prediction</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Hand Digit Prediction</h1>
+        <form id="upload-form" action="/predict" method="POST" enctype="multipart/form-data">
+            <input type="file" id="file-input" name="file" accept="image/*" required>
+            <button type="submit">Upload and Predict</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        document.getElementById('upload-form').onsubmit = async function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('file-input');
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.prediction !== undefined) {
+                    document.getElementById('result').innerText = `Predicted Digit: ${result.prediction}`;
+                } else {
+                    document.getElementById('result').innerText = 'Error in prediction.';
+                }
+            } catch (error) {
+                document.getElementById('result').innerText = 'Error: Unable to fetch prediction.';
+            }
+        };
+    </script>
+</body>
+</html>

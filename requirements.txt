@@ -13,7 +13,6 @@ jupyterlab==4.0.5
 notebook
 mlflow==2.16.2
 pyYAML
-joblib
 types-PyYAML
 Flask
 Flask-Cors

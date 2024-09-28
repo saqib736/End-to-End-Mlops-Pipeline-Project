@@ -1,3 +1,4 @@
+import torch
 from torch import nn, save
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -16,7 +17,10 @@ class ModelTrainer:
         
         train_loader = DataLoader(self.train_dataset, batch_size=self.config.batch_size, shuffle=True, num_workers=2)
         
-        model = ImageClassifier().to('cuda')
+        model = ImageClassifier()
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        model = model.to(device)
+        
         optimizer = Adam(model.parameters(), lr=self.config.learning_rate)
         loss_fn = nn.CrossEntropyLoss()
         
@@ -24,8 +28,8 @@ class ModelTrainer:
             model.train()
             for images, labels in train_loader:
                 
-                images = images.to('cuda')
-                labels = labels.to('cuda')
+                images = images.to(device)
+                labels = labels.to(device)
                 
                 optimizer.zero_grad()
                 output = model(images)
