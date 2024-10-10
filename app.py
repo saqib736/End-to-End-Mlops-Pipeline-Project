@@ -1,39 +1,59 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
+import time
+
 from mlproject.pipeline.inference import InferencePipeline
 
-app = Flask(__name__)
+# Update static_folder to point to the exported static files directory
+app = Flask(__name__, static_folder='frontend/out', static_url_path='')
+app.wsgi_app = ProxyFix(app.wsgi_app)
+CORS(app)
 
-# Instantiate the InferencePipeline only once
 inference_pipeline = InferencePipeline()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Serve Next.js static files (e.g., JavaScript, CSS)
+@app.route('/_next/static/<path:path>')
+def next_static(path):
+    return send_from_directory(os.path.join(app.static_folder, '_next', 'static'), path)
 
-@app.route('/train', methods=['GET'])  # route to train the pipeline
-def training():
-    os.system("python3 main.py")
-    return "Training Successful!"
+# Serve other static assets in the `public` folder
+@app.route('/public/<path:path>')
+def public_files(path):
+    return send_from_directory(os.path.join(app.static_folder, 'public'), path)
 
-@app.route('/predict', methods=['POST'])
-def predict():
+# Serve the exported HTML files, defaulting to index.html
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    # Check if the requested path matches a file directly
+    file_path = os.path.join(app.static_folder, path)
+    if os.path.isfile(file_path):
+        return send_from_directory(app.static_folder, path)
+    
+    # Default to index.html for any other paths (for SPA routing)
+    return send_from_directory(app.static_folder, 'index.html')
+
+# API endpoint for image classification
+@app.route('/api/classify', methods=['POST'])
+def classify_image():
     try:
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file uploaded'})
-        
-        file = request.files['file']
-        if file:
-            img_bytes = file.read()
-            prediction = inference_pipeline.predict_image(img_bytes)
-            return jsonify({'prediction': str(prediction)})
-        
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file provided'}), 400
+
+        image = request.files['image']
+        if image:
+            img_bytes = image.read()
+            classification = inference_pipeline.predict_image(img_bytes)
+            return jsonify({'classification': classification})
+            
         return jsonify({'error': 'Something went wrong'})
     
     except Exception as e:
-        # Return a detailed error message in case of failure
         return jsonify({'error': str(e)})
+    
+    time.sleep(2)  # Simulate processing time
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(host="0.0.0.0", port = 8080)
+    app.run(host="0.0.0.0", port=8080)
